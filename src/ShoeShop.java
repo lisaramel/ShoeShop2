@@ -28,17 +28,29 @@ public class ShoeShop {
 
          */
 
-
-        String choose;
+        Repository r = new Repository();
+        String userName;
+        String password;
         Scanner sc = new Scanner(System.in);
 
         while(true){
-            System.out.println("");
-            choose = sc.nextLine().trim();
-            if (choose.equalsIgnoreCase("q")){
+            System.out.println("Användarnamn: ");
+            userName = sc.nextLine().trim();
+            if (userName.equalsIgnoreCase("q")){
                 System.exit(0);
             }
-            //System.out.println();
+            System.out.println("Lösenord: ");
+            password = sc.nextLine().trim();
+            if (userName.equalsIgnoreCase("q")){
+                System.exit(0);
+            }
+
+            if (r.signIn(userName, password) == null){
+                System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
+            } else {
+                System.out.println(r.signIn(userName, password));
+                break;
+            }
         }
     }
 

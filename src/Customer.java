@@ -40,4 +40,8 @@ public class Customer {
                 ", addressId=" + addressId +
                 '}';
     }
+
+    public String getName() {
+        return name;
+    }
 }
