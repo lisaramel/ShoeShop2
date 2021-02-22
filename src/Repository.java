@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,7 +23,8 @@ public class Repository {
         public Repository(){
 
             try {
-                p.load(new FileInputStream("SkoButik/src/resources/Settings.properties"));
+                p.load(new FileInputStream("src/resources/Settings.properties"));
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -31,8 +34,125 @@ public class Repository {
 
         }
 
+        public List<Product> getProducts(){
+            List<Product> products = new ArrayList<>();
 
-        public List<Customer> readCustomers(){
+            String query = "select id, euSizing, colour, price, brandId, amountInStock from product";
+
+            try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query)){
+
+                while(rs.next()){
+                    Product p = new Product(rs.getInt("id"), rs.getInt("euSizing"),
+                            rs.getString("colour"), rs.getDouble("price"),
+                            rs.getInt("brandId"), rs.getInt("amountInStock"));
+
+                    products.add(p);
+                }
+
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+
+            return products;
+
+        }
+
+        public List<Object> getTables(String tableName){
+            List<Object> list = new ArrayList<>();
+            String query = "select id, name from ?";
+
+            try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+                CallableStatement stmt = con.prepareCall(query)){
+
+                ResultSet rs = stmt.executeQuery(query);
+
+                stmt.setString(1, tableName);
+                rs = stmt.executeQuery();
+
+                if(tableName.equals("brand")){
+                    while(rs.next()){
+                        Brand b = new Brand(rs.getInt("id"),
+                                rs.getString("name"));
+                        list.add(b);
+                    }
+                } else if (tableName.equals("category")){
+                    while(rs.next()){
+                    Category c = new Category(rs.getInt("id"),
+                            rs.getString("name"));
+                    list.add(c);
+                }  }
+
+
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+            return list;
+        }
+
+
+    public List<Brand> getBrands(){
+        List<Brand> brands = new ArrayList<>();
+        String query = "select id, name from brand";
+
+        try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query)){
+
+            while(rs.next()){
+                Brand b = new Brand(rs.getInt("id"),
+                        rs.getString("name"));
+                brands.add(b);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return brands;
+    }
+
+
+    public List<Category> getCategories(){
+        List<Category> categories = new ArrayList<>();
+        String query = "select id, name from category";
+
+        try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query)){
+
+            while(rs.next()){
+                Category c = new Category(rs.getInt("id"),
+                        rs.getString("name"));
+                categories.add(c);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
+    public List<Pair> getCategoryBelongings(){
+        List<Pair> belongings = new ArrayList<>();
+        String query = "select productId, categoryId from categoryBelonging";
+
+        try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query)){
+
+            while(rs.next()){
+                Pair p = new Pair(rs.getInt("productId"), rs.getInt("categoryId"));
+                belongings.add(p);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return belongings;
+    }
+
+    public List<Customer> readCustomers(){
             List<Customer> customers = new ArrayList<>();
 
             String query = "select id, name, addressId, password, username from customer";
@@ -89,4 +209,4 @@ public class Repository {
         }
 
 
-    }
+}
