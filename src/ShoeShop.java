@@ -45,12 +45,16 @@ public class ShoeShop {
                 System.exit(0);
             }
 
-            if (r.signIn(userName, password) == null){
+            Customer customer = r.signIn(userName, password);
+
+            if (customer == null){
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
-                System.out.println(r.signIn(userName, password));
+
                 break;
             }
+
+
         }
     }
 
