@@ -7,16 +7,37 @@
  */
 public class Customer {
 
+    private int ID;
+    private String userName;
+    private String passWord;
     private String name;
-    private String streetAddress;
-    private int zipCode;
-    private String state;
+    private String address;
+    private int addressId;
 
-    Customer(String name, String streetAddress, int zipCode, String state){
+    public Customer(int id, String userName, String name) {
+        this.ID = id;
+        this.userName = userName;
         this.name = name;
-        this.streetAddress = streetAddress;
-        this.zipCode = zipCode;
-        this.state = state;
     }
 
+
+    public Customer(int ID, String name, int addressId, String userName, String passWord) {
+        this.ID = ID;
+        this.userName = userName;
+        this.passWord = passWord;
+        this.name = name;
+        this.addressId = addressId;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "ID=" + ID +
+                ", userName='" + userName + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", addressId=" + addressId +
+                '}';
+    }
 }
