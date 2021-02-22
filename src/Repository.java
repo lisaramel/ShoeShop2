@@ -15,22 +15,19 @@ import java.util.Properties;
  */
 public class Repository {
 
-    private Connection con;
     private Properties p = new Properties();
 
         public Repository(){
 
             try {
-                p.load(new FileInputStream("SkoButik/src/resources/Settings.properties"));
+                p.load(new FileInputStream("src/resources/Settings.properties"));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-
         }
-
 
         public List<Customer> readCustomers(){
             List<Customer> customers = new ArrayList<>();
@@ -88,5 +85,47 @@ public class Repository {
             return "Ny order!";
         }
 
+        public Customer findCustomer(String userName){
+
+            String query = "select * from customer where username like " + '\'' + userName + '\'';
+
+            try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query)){
+
+                Customer c = null;
+
+                while (rs.next()) {
+                    c = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
+                }
+                return c;
+
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public Customer signIn(String userName, String password){
+
+            String query = "select * from customer where username like " + '\'' + userName + '\'' + " and password like " + '\'' + password + '\'';
+
+            try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(query)){
+
+                Customer c = null;
+
+                while (rs.next()) {
+                    c = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
+                }
+                return c;
+
+
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+            return null;
+        }
 
     }
