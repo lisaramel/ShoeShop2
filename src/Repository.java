@@ -1,4 +1,4 @@
-import javafx.util.Pair;
+//import javafx.util.Pair;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -133,7 +133,7 @@ public class Repository {
         return categories;
     }
 
-    public List<Pair> getCategoryBelongings(){
+   /* public List<Pair> getCategoryBelongings(){
         List<Pair> belongings = new ArrayList<>();
         String query = "select productId, categoryId from categoryBelonging";
 
@@ -150,7 +150,7 @@ public class Repository {
             e.printStackTrace();
         }
         return belongings;
-    }
+    }*/
 
     public List<Customer> readCustomers(){
             List<Customer> customers = new ArrayList<>();
