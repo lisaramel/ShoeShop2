@@ -1,4 +1,4 @@
-import javafx.util.Pair;
+//import javafx.util.Pair;
 
 import java.util.List;
 import java.util.Scanner;
@@ -19,9 +19,9 @@ public class ShoeShop {
 
 
     public ShoeShop() throws InterruptedException{
-        assembleProducts();
+        /*assembleProducts();
         assembleCategoryBelonging();
-        /*
+
         for(Product p : products){
             System.out.println(p);
         }
@@ -54,7 +54,7 @@ public class ShoeShop {
         }
     }
 
-    public void assembleCategoryBelonging(){
+    /*public void assembleCategoryBelonging(){
         categories = r.getCategories();
         List<Pair> categoryBelongings = r.getCategoryBelongings();
 
@@ -79,7 +79,7 @@ public class ShoeShop {
             System.out.println(c.getProducts().size());
         }
 
-    }
+    }*/
 
 
     public void assembleProducts(){
