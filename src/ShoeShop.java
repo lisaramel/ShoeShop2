@@ -130,8 +130,7 @@ public class ShoeShop {
             int ordersId = -1;
 
             for(Order o : currentCustomer.getOrders()){
-                if(o.getDate().equals(LocalDate.parse("2020-12-05"))){ // LocalDate.now()
-
+                if(o.getDate().equals(LocalDate.now())){ // , LocalDate.parse("2020-12-05")
                     ordersId = o.getId();
                 }
             }
@@ -139,6 +138,7 @@ public class ShoeShop {
             r.newOrder(currentCustomer.getID(), ordersId, chosenProduct.getId());
 
             System.out.println("du har lagt " + chosenProduct.shopperView() + " i din beställning");
+            assembleOrders();
             updateStock();
 
 
