@@ -6,7 +6,7 @@ import java.util.List;
  * Date: 2021-02-22
  * Time: 13:56
  * Project: ShoeShop2
- * Copywrite: MIT
+. * Copywrite: MIT
  */
 public class Order {
 

@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Created by Lisa Ramel
  * Date: 2021-02-22
@@ -7,4 +9,31 @@
  */
 public class Review {
 
+    int ratingId;
+    String text;
+    int productId;
+    int orderId;
+
+    public Review(int ratingId, String text, int productId, int orderId) {
+        this.ratingId = ratingId;
+        this.text = text;
+        this.productId = productId;
+        this.orderId = orderId;
+    }
+
+    public int getRatingId() {
+        return ratingId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
 }

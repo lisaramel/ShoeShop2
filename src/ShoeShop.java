@@ -70,7 +70,7 @@ public class ShoeShop {
         System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
         int userChoice = sc.nextInt();
 
-
+        //1gamla bestlällningar 2aktuell beställning 3ge betyg, kommentera 5 visa produkter medelvärde 6 logga ut
         while (true){
             if(userChoice == 1){
                 // visa beställningar
@@ -189,6 +189,8 @@ public class ShoeShop {
             o.setProductIds(r.getCarts(o.getId()));
         }
     }
+
+    //getCurrentCustomerID
 
     public void assembleProducts(){
         products = r.getProducts();

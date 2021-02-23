@@ -179,6 +179,28 @@ public class Repository {
         return categories;
     }
 
+    public void setRating(int customerId, int productId, int ratingId, String text) {
+        String query1 = "CALL addTTomte(?, ?, ?, ?)";
+        //String query2 = "select ratingId from review where ratingId = ?";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt1 = con.prepareCall(query1)){
+           //  PreparedStatement stmt2 = con.prepareCall(query2);
+           //  ResultSet rs = stmt2.executeQuery(query2)) {
+
+            stmt1.setInt(1, customerId);
+            stmt1.setInt(2, productId);
+            stmt1.setInt(3, ratingId);
+            stmt1.setString(4, text);
+            stmt1.executeQuery();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+
+        }
+    }
+
+
    /* public List<Pair> getCategoryBelongings(){
         List<Pair> belongings = new ArrayList<>();
         String query = "select productId, categoryId from categoryBelonging";
