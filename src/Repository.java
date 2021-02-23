@@ -253,7 +253,7 @@ public class Repository {
         return "Ny order!";
     }
 
-    public Customer findCustomer(String userName) {
+    public Customer getCustomer(String userName) {
 
         String query = "select * from customer where username like " + '\'' + userName + '\'';
 
@@ -282,12 +282,13 @@ public class Repository {
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
-            Customer c = null;
+                Customer customer = null;
 
-            while (rs.next()) {
-                c = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
-            }
-            return c;
+                while (rs.next()) {
+                    customer = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
+                    System.out.println("Välkommen " + customer.getName() + "!");
+                }
+                return customer;
 
 
         } catch (SQLException e) {

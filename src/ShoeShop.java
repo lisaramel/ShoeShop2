@@ -1,4 +1,4 @@
-import javafx.util.Pair;
+//import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,7 +55,6 @@ public class ShoeShop {
             if (r.signIn(userName, password) == null){
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
-                // System.out.println(r.signIn(userName, password));
                 currentCustomer = r.signIn(userName, password);
                 inloggedLoop();
                 break;
