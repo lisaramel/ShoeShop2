@@ -1,5 +1,7 @@
 //import javafx.util.Pair;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,25 +15,30 @@ import java.util.Scanner;
 public class ShoeShop {
 
     private Repository r = new Repository();
+    private Scanner sc = new Scanner(System.in);
     private List<Product> products;
+    private List<Product> availableProducts;
     private List<Brand> brands;
     private List<Category> categories;
 
+    private Customer currentCustomer;
+
 
     public ShoeShop() throws InterruptedException{
-        /*assembleProducts();
-        assembleCategoryBelonging();
-
+        assembleProducts();
+        updateStock();
+        //assembleCategoryBelonging();
+        /*
         for(Product p : products){
             System.out.println(p);
         }
 
          */
 
-        Repository r = new Repository();
+
         String userName;
         String password;
-        Scanner sc = new Scanner(System.in);
+
 
         while(true){
             System.out.println("Användarnamn: ");
@@ -45,23 +52,111 @@ public class ShoeShop {
                 System.exit(0);
             }
 
-            Customer customer = r.signIn(userName, password);
-
-            if (customer == null){
+            if (r.signIn(userName, password) == null){
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
-
+                currentCustomer = r.signIn(userName, password);
+                inloggedLoop();
                 break;
             }
+        }
+    }
+
+    public void inloggedLoop(){
+        assembleOrders();
+
+        System.out.println("välkommen " + currentCustomer.getName() + "!");
+
+        System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+        int userChoice = sc.nextInt();
+
+
+        while (true){
+            if(userChoice == 1){
+                // visa beställningar
+                showOrders();
+                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                userChoice = sc.nextInt();
+            } else if(userChoice == 2){
+                shoppingLoop();
+                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                userChoice = sc.nextInt();
+            } else if (userChoice == 3){
+                // logga ut
+                break;
+            } else{
+                System.out.println("fattar inte, försök igen");
+                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                userChoice = sc.nextInt();
+            }
+
+        }
+    }
+
+    public void updateStock(){
+        availableProducts = new ArrayList<>();
+        for(Product p: products){
+            if (p.getAmountInStock() > 0){
+                availableProducts.add(p); // borde gå med en lamda?
+            }
+        }
+    }
+
+    public void showOrders(){
+        // skriv ut alla orders
+        currentCustomer.getOrders().stream().forEach(e -> System.out.println(e.getDate() + " " + e.getProductIds()));
+
+    }
+
+    public void shoppingLoop(){
+
+        while (true){
+            System.out.println("Vilken sko vill du lägga i din beställning? ");
+            printEnumeratedStockedProductes();
+            int userChoice = sc.nextInt();
+
+            if (userChoice == availableProducts.size()+1) {
+                // tillbaka till huvudmenyn
+                break;
+            }
+
+            // här göra addToCart-anrop
+            // alltså skaffa alla idn
+            // kolla dagens datum, finns det ingen beställning med dagens datum skickas ordersId -1 in
+            // för det borde ju inte finnas, och då kommer vi till skapa ny order
+
+            Product chosenProduct = availableProducts.get(userChoice-1);
+            int ordersId = -1;
+
+            for(Order o : currentCustomer.getOrders()){
+                if(o.getDate().equals(LocalDate.parse("2020-12-05"))){ // LocalDate.now()
+
+                    ordersId = o.getId();
+                }
+            }
+
+            r.newOrder(currentCustomer.getID(), ordersId, chosenProduct.getId());
+
+            System.out.println("du har lagt " + chosenProduct.shopperView() + " i din beställning");
+            updateStock();
 
 
         }
     }
 
-    /*public void assembleCategoryBelonging(){
-        categories = r.getCategories();
-        List<Pair> categoryBelongings = r.getCategoryBelongings();
+    public void printEnumeratedStockedProductes(){
+        int counter = 1;
+        for(Product p: availableProducts){
+            System.out.println(counter + " " + p.shopperView());
+            counter++;
+        }
+        System.out.println(counter + " jag vill tillbaka");
+    }
 
+    public void assembleCategoryBelonging(){
+        categories = r.getCategories();
+        //List<Pair> categoryBelongings = r.getCategoryBelongings();
+/*
         for (Pair p : categoryBelongings){
 
             System.out.println(p.getKey());
@@ -83,20 +178,25 @@ public class ShoeShop {
             System.out.println(c.getProducts().size());
         }
 
-    }*/
+ */
 
+    }
+
+    public void assembleOrders(){
+        currentCustomer.ordersSetup(r.getOrders(currentCustomer.getID()));
+        // och carts som hör till detta
+        for(Order o : currentCustomer.getOrders()){
+            o.setProductIds(r.getCarts(o.getId()));
+        }
+    }
 
     public void assembleProducts(){
         products = r.getProducts();
         brands = r.getBrands();
-
-        System.out.println(products.size());
-
         for(Product p : products){
             Brand b = brandById(p.getBrandId());
             p.setBrand(b);
         }
-
     }
 
 

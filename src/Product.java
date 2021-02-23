@@ -61,6 +61,10 @@ public class Product {
         return amountInStock;
     }
 
+    public String shopperView(){
+        return colour + " " + brand.getName() + " storlek " + size + " " + price + " kr.";
+    }
+
     @Override
     public String toString() {
         return "Product{" +

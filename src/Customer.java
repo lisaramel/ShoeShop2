@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Created by Lisa Ramel
  * Date: 2021-02-22
@@ -13,6 +15,7 @@ public class Customer {
     private String name;
     private String address;
     private int addressId;
+    private List<Order> orders;
 
     public Customer(int id, String userName, String name) {
         this.ID = id;
@@ -27,6 +30,18 @@ public class Customer {
         this.passWord = passWord;
         this.name = name;
         this.addressId = addressId;
+    }
+
+    public void ordersSetup(List<Order> orders){
+        this.orders = orders;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     @Override
