@@ -250,8 +250,7 @@ public class ShoeShop {
                     userChoice = sc.nextInt();
                 }
 
-                Rating rate = ratings.get(userChoice - 1);     System.out.println("Du har lagt till " + chosenProduct.shopperView()      System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning");+ " i din beställning");
-
+                Rating rate = ratings.get(userChoice - 1);
                 String text = "";
 
                 System.out.println("Vill du lägga till en kommentar?");
