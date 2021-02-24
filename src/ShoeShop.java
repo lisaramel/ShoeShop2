@@ -58,13 +58,15 @@ public class ShoeShop {
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
                 currentCustomer = r.signIn(userName, password);
+                System.out.println("\nVälkommen " + currentCustomer.getName() +"\n");
+                Thread.sleep(1000);
                 inloggedLoop();
                 break;
             }
         }
     }
 
-    public void inloggedLoop(){
+    public void inloggedLoop() throws InterruptedException {
         assembleOrders();
 
         System.out.println(showMeny());
@@ -84,14 +86,14 @@ public class ShoeShop {
                 System.out.println(showTodaysOrder());
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
+            } else if(userChoice == 4){
+                rateProduct();
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
             }
             else if (userChoice == 6){
                 // logga ut
                 break;
-            } else if(userChoice == 4){
-                rateProduct();
-                showMeny();
-                userChoice = sc.nextInt();
             } else{
                 System.out.println("Fattar inte, försök igen\n");
                 System.out.println(showMeny());
@@ -169,9 +171,10 @@ public class ShoeShop {
         }
     }
 
-    public void rateProduct(){
+    public void rateProduct() throws InterruptedException {
         while (true){
-            System.out.println("Vilken sko vill du betygsätta? ");
+            System.out.println("Vilken sko vill du betygsätta?\n");
+            Thread.sleep(700);
             printEnumeratedStockedProductes();
             int userChoice = sc.nextInt();
 
@@ -186,17 +189,9 @@ public class ShoeShop {
             System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
             userChoice = sc.nextInt();
 
-            if (userChoice == 1) {
-                System.out.println("Du gav produkten betyget \"Missnöjd\"");
-            } else if (userChoice == 2) {
-                System.out.println("Du gav produkten betyget \"Ganska nöjd\"");
-            } else if (userChoice == 3) {
-                System.out.println("Du gav produkten betyget \"Nöjd\"");
-            } else if (userChoice == 4) {
-                System.out.println("Du gav produkten betyget \"Mycket nöjd\"");
-            } else {
-                System.out.println("Fel inmatning? Försök igen.");
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+            if(userChoice > 4 || userChoice < 0){
+                System.out.println("Fattar inte, försök igen\n");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             }
 
@@ -212,7 +207,7 @@ public class ShoeShop {
                 System.out.println("Kommentar: ");
                 text = sc.next();
             } else if (userChoice == 2) {
-                text = "";
+                r.setNullValue("review", "text");
             } else {
                 System.out.println("Fel inmatning? Försök igen.");
                 System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
@@ -221,9 +216,9 @@ public class ShoeShop {
 
             r.setRating(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
 
-            System.out.println("Du har gett " + chosenProduct.shopperView() + " betyget " + rate.getName() + "\n");
-
-
+            System.out.println("Du har gett " + chosenProduct.shopperView() + " betyget: " + rate.getName() + "\n");
+            Thread.sleep(1000);
+            break;
         }
     }
 
