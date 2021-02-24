@@ -193,7 +193,7 @@ public class ShoeShop {
         while (true){
             System.out.println("Vilken sko vill du betygsätta?\n");
             Thread.sleep(700);
-            printEnumeratedProductes();
+            printEnumeratedProducts(products);
             System.out.println("Vilken sko vill du betygsätta? ");
             printEnumeratedProducts(availableProducts);
             int userChoice = sc.nextInt();
