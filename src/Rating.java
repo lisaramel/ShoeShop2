@@ -36,4 +36,8 @@ public class Rating {
     public LocalDate getDate() {
         return date;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

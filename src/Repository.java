@@ -58,16 +58,14 @@ public class Repository {
     public List<Rating> getRatings() {
         List<Rating> ratings = new ArrayList<>();
 
-        String query = "select id, name, number, created from rating";
+        String query = "select id, name, number from rating";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                Rating r = new Rating(rs.getInt("id"), rs.getString("name"),
-                        rs.getInt("number"));
-
+                Rating r = new Rating(rs.getInt("id"), rs.getString("name"), rs.getInt("number"));
                 ratings.add(r);
             }
 
