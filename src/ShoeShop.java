@@ -92,7 +92,10 @@ public class ShoeShop {
                 rateProduct();
                 showMeny();
                 userChoice = sc.nextInt();
-            } else{
+            } else if(userChoice == 5){
+
+            }
+            else{
                 System.out.println("Fattar inte, försök igen\n");
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
@@ -125,12 +128,7 @@ public class ShoeShop {
 
 
     public void showOrders(){
-        // skriv ut alla orders
-        for (Order o : currentCustomer.getOrders()){
-            System.out.println(o.getOrderInfo());
-        }
-        //currentCustomer.getOrders().stream().forEach(e -> System.out.println(e.getDate() + " " + e.getProductIds()));
-
+        currentCustomer.getOrders().stream().forEach(o -> System.out.println(o.getOrderInfo()));
     }
 
     public void shoppingLoop(){
@@ -144,17 +142,11 @@ public class ShoeShop {
                 // tillbaka till huvudmenyn
                 break;
             }
-
-            // här göra addToCart-anrop
-            // alltså skaffa alla idn
-            // kolla dagens datum, finns det ingen beställning med dagens datum skickas ordersId -1 in
-            // för det borde ju inte finnas, och då kommer vi till skapa ny order
-
             Product chosenProduct = availableProducts.get(userChoice-1);
             int ordersId = -1;
 
             for(Order o : currentCustomer.getOrders()){
-                if(o.getDate().equals(LocalDate.now())){ // , LocalDate.parse("2020-12-05")
+                if(o.getDate().equals(LocalDate.now())){
                     ordersId = o.getId();
                 }
             }
