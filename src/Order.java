@@ -36,10 +36,6 @@ public class Order {
         products.add(p);
     }
 
-    public List<Product> getProducts(){
-        return products;
-    }
-
     public List<Integer> getProductIds() {
         return productIds;
     }

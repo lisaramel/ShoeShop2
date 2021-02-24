@@ -26,8 +26,6 @@ public class Repository {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public List<Product> getProducts() {
@@ -50,9 +48,7 @@ public class Repository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return products;
-
     }
 
     public List<Rating> getRatings() {
@@ -72,9 +68,7 @@ public class Repository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return ratings;
-
     }
 
 
@@ -100,7 +94,6 @@ public class Repository {
 
     public List<Order> getOrders(int customerId) {
         List<Order> orders = new ArrayList<>();
-        // men egentligen behöver vi väl inte customerId
         String query = "select id, dateOfOrder, customerId from orders where customerId = ?";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
@@ -144,8 +137,6 @@ public class Repository {
         }
 
         return productIds;
-
-
     }
 
     public List<Category> getCategories() {
@@ -182,10 +173,8 @@ public class Repository {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-
         }
     }
-
 
    public List<CategoryBelonging> getCategoryBelongings(){
         List<CategoryBelonging> belongings = new ArrayList<>();
@@ -206,35 +195,9 @@ public class Repository {
         return belongings;
     }
 
-    public List<Customer> readCustomers() {
-        List<Customer> customers = new ArrayList<>();
-
-        String query = "select id, name, addressId, password, username from customer";
-
-
-        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                Customer c = new Customer(rs.getInt("id"), rs.getString("name"),
-                        rs.getInt("addressId"), rs.getString("password"),
-                        rs.getString("username"));
-
-                customers.add(c);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return customers;
-
-    }
-
     public String newOrder(int customerId, int ordersID, int productId) {
         ResultSet rs = null;
-        String errorMsg = ""; // används för att ta emot select-sats med felmeddelande från sp
+        String errorMsg = "";
         String query = "CALL addToCart(?,?,?)";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
@@ -288,8 +251,6 @@ public class Repository {
             throwables.printStackTrace();
 
         }
-
-
         return reviews;
     }
 
@@ -311,27 +272,6 @@ public class Repository {
         return avgRate;
     }
 
-    public Customer getCustomer(String userName) {
-
-        String query = "select * from customer where username like " + '\'' + userName + '\'';
-
-        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            Customer c = null;
-
-            while (rs.next()) {
-                c = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
-            }
-            return c;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public Customer signIn(String userName, String password) {
 
         String query = "select * from customer where username like " + '\'' + userName + '\'' + " and password like " + '\'' + password + '\'';
@@ -344,38 +284,12 @@ public class Repository {
 
                 while (rs.next()) {
                     customer = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
-                    //System.out.println("Välkommen " + customer.getName() + "!");
                 }
                 return customer;
-
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public String setNullValue(String tableName, String columnName) {
-        String query = "insert into " + tableName + "(" + columnName + ") values ?";
-        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
-             PreparedStatement ps = con.prepareStatement(query);) {
-
-            ps.setNull(1, Types.NULL);
-            ps.executeUpdate();
-
-           /* try (ResultSet rs = ps.executeQuery()) {
-
-                String findNull = "";
-
-                while (rs.next()) {
-                    findNull = rs.getString(columnName);
-                    return findNull;
-                }
-            }*/
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 }
