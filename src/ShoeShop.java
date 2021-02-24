@@ -220,15 +220,13 @@ public class ShoeShop {
             System.out.println("Vilken sko vill du betygsätta?\n");
             Thread.sleep(700);
             printEnumeratedProducts(products);
-            System.out.println("Vilken sko vill du betygsätta? ");
-            printEnumeratedProducts(availableProducts);
             int userChoice = sc.nextInt();
 
-            if (userChoice == availableProducts.size()+1) {
+            if (userChoice == products.size()+1) {
                 break;
             }
 
-            Product chosenProduct = availableProducts.get(userChoice-1);
+            Product chosenProduct = products.get(userChoice-1);
 
             if (getCustomersOrderedProducts().contains(chosenProduct)) {
                 System.out.println("Vad vill du ge den för betyg?");
