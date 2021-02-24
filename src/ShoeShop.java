@@ -111,9 +111,9 @@ public class ShoeShop {
     }
 
     public String showMeny(){
-        return "1. Visa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
+        return "1.\nVisa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
                 "\n4. Visa aktuell beställning \n5. Betygsätt produkter " +
-                "\n6. Visa produkters medelvärde \n7. Logga ut.\n";
+                "\n6. Visa produkters medelvärde \n7. Logga ut.";
 
     }
 
@@ -136,7 +136,7 @@ public class ShoeShop {
 
 
     public void showOrders() throws InterruptedException {
-        currentCustomer.getOrders().stream().forEach(o -> System.out.println(o.getOrderInfo()));
+        currentCustomer.getOrders().stream().forEach(o -> System.out.println(o.getOrderInfo() +"\n"));
         Thread.sleep(1000);
     }
 
@@ -206,7 +206,7 @@ public class ShoeShop {
             }
             Product chosenProduct = products.get(userChoice-1);
             getProductRatings(chosenProduct);
-            Thread.sleep(2000);
+            Thread.sleep(1500);
         }
 
     }
@@ -264,10 +264,10 @@ public class ShoeShop {
                 } else if (userChoice == 2) {
                     text = "";
                 } else {
-                    System.out.println("Fel inmatning? Försök igen.");
+                    System.out.println("Fattar inte, försök igen\n");
                     System.out.println(showMeny());
                     userChoice = sc.nextInt();
-                }     System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning");
+                }
 
                 r.setRating(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
 
