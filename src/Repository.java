@@ -330,7 +330,7 @@ public class Repository {
 
                 while (rs.next()) {
                     customer = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
-                    System.out.println("Välkommen " + customer.getName() + "!");
+                    //System.out.println("Välkommen " + customer.getName() + "!");
                 }
                 return customer;
 
@@ -341,4 +341,27 @@ public class Repository {
         return null;
     }
 
+    public String setNullValue(String tableName, String columnName) {
+        String query = "insert into " + tableName + "(" + columnName + ") values ?";
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             PreparedStatement ps = con.prepareStatement(query);) {
+
+            ps.setNull(1, Types.NULL);
+            ps.executeUpdate();
+
+           /* try (ResultSet rs = ps.executeQuery()) {
+
+                String findNull = "";
+
+                while (rs.next()) {
+                    findNull = rs.getString(columnName);
+                    return findNull;
+                }
+            }*/
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }
