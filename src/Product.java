@@ -1,4 +1,3 @@
-import java.util.List;
 
 /**
  * Created by Lisa Ramel
@@ -16,7 +15,6 @@ public class Product {
     private int brandId;
     private Brand brand;
     private int amountInStock;
-    // category ?
 
 
     public Product(int id, int size, String colour, double price, int brandId, int amountInStock) {
@@ -33,7 +31,6 @@ public class Product {
     }
 
     public void setBrand(Brand brand) {
-        // slå upp Brand-objekt via brandId
         this.brand = brand;
     }
 
@@ -43,14 +40,6 @@ public class Product {
 
     public int getId() {
         return id;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public String getColour() {
-        return colour;
     }
 
     public double getPrice() {

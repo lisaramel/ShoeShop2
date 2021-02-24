@@ -1,5 +1,3 @@
-//import javafx.util.Pair;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +49,7 @@ public class ShoeShop {
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
                 currentCustomer = r.signIn(userName, password);
+
                 System.out.println("\nVälkommen " + currentCustomer.getName());
                 Thread.sleep(1000);
                 inloggedLoop();
@@ -98,7 +97,6 @@ public class ShoeShop {
                 userChoice = sc.nextInt();
             }
             else if (userChoice == 7){
-                // logga ut
                 break;
             }
             else{
@@ -160,7 +158,6 @@ public class ShoeShop {
                 int userChoice = sc.nextInt();
 
                 if (userChoice == availableProducts.size()+1) {
-                    // tillbaka till huvudmenyn
                     break;
                 }
                 chosenProduct = availableProducts.get(userChoice-1);
@@ -169,7 +166,6 @@ public class ShoeShop {
                 printEnumeratedProducts(c.getProducts());
                 int userChoice = sc.nextInt();
                 if (userChoice == c.getProducts().size()+1) {
-                    // tillbaka till huvudmenyn
                     break;
                 }
                 chosenProduct = c.getProducts().get(userChoice-1);
@@ -201,7 +197,6 @@ public class ShoeShop {
             printEnumeratedProducts(products);
             int userChoice = sc.nextInt();
             if (userChoice == products.size()+1) {
-                // tillbaka till huvudmenyn
                 break;
             }
             Product chosenProduct = products.get(userChoice-1);
@@ -232,7 +227,6 @@ public class ShoeShop {
             int userChoice = sc.nextInt();
 
             if (userChoice == availableProducts.size()+1) {
-                // tillbaka till huvudmenyn
                 break;
             }
 
@@ -305,13 +299,12 @@ public class ShoeShop {
                     }
                 }
             }
-        } //categories.stream().forEach(e -> System.out.println(e.getName() + ": " + e.getProducts().size()));
+        }
     }
 
 
     public void assembleOrders(){
         currentCustomer.ordersSetup(r.getOrders(currentCustomer.getID()));
-        // och carts som hör till detta
         for(Order o : currentCustomer.getOrders()){
             o.setProductIds(r.getCarts(o.getId()));
         }
@@ -331,7 +324,6 @@ public class ShoeShop {
     public List<Product> getCustomersOrderedProducts(){
         List<Product> customersProducts = new ArrayList<>();
         currentCustomer.ordersSetup(r.getOrders(currentCustomer.getID()));
-        // och carts som hör till detta
         for(Order o : currentCustomer.getOrders()){
             o.setProductIds(r.getCarts(o.getId()));
         }
@@ -348,8 +340,6 @@ public class ShoeShop {
         return customersProducts;
 
     }
-
-    //getCurrentCustomerID
 
     public void getRatingIds(){
         ratings = r.getRatings();

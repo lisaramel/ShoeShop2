@@ -17,13 +17,6 @@ public class Customer {
     private int addressId;
     private List<Order> orders;
 
-    public Customer(int id, String userName, String name) {
-        this.ID = id;
-        this.userName = userName;
-        this.name = name;
-    }
-
-
     public Customer(int ID, String name, int addressId, String userName, String passWord) {
         this.ID = ID;
         this.userName = userName;
