@@ -121,7 +121,6 @@ public class ShoeShop {
             int userChoice = sc.nextInt();
 
             if (userChoice == availableProducts.size()+1) {
-                // tillbaka till huvudmenyn
                 break;
             }
 
@@ -145,7 +144,6 @@ public class ShoeShop {
             System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning");
             updateStock();
 
-
         }
     }
 
@@ -156,7 +154,6 @@ public class ShoeShop {
             int userChoice = sc.nextInt();
 
             if (userChoice == availableProducts.size()+1) {
-                // tillbaka till huvudmenyn
                 break;
             }
 
