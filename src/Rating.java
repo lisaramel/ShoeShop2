@@ -29,15 +29,7 @@ public class Rating {
         return name;
     }
 
-    public int getNumber() {
-        return number;
-    }
-
     public LocalDate getDate() {
         return date;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }
