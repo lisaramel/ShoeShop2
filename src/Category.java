@@ -48,6 +48,6 @@ public class Category {
     }
 
     public void addProducts(Product product) {
-        this.products = products;
+        products.add(product);
     }
 }

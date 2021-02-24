@@ -1,9 +1,7 @@
 //import javafx.util.Pair;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by Lisa Ramel
@@ -29,7 +27,7 @@ public class ShoeShop {
         assembleProducts();
         updateStock();
         getRatingIds();
-        //assembleCategoryBelonging();
+        assembleCategoryBelonging();
         /*
         for(Product p : products){
             System.out.println(p);
@@ -251,33 +249,23 @@ public class ShoeShop {
         System.out.println(counter + ". Jag vill tillbaka");
     }
 
-    public void assembleCategoryBelonging(){
+    public void assembleCategoryBelonging() {
         categories = r.getCategories();
-        //List<Pair> categoryBelongings = r.getCategoryBelongings();
-/*
-        for (Pair p : categoryBelongings){
+        List<CategoryBelonging> categoryBelongings = r.getCategoryBelongings();
 
-            System.out.println(p.getKey());
-        }
-
-        for(Product p : products){
-            System.out.println(p.getColour() + p.getSize());
-            for(Category c : categories){
-                System.out.println(" p " + p.getId() + "   c " + c.getId());
-                if(p.getId() == c.getId()){
-
-                    c.addProducts(p);
+        for (CategoryBelonging cb : categoryBelongings) {
+            int cId = cb.getCategoryId();
+            int pId = cb.getProductId();
+            for (Category c : categories) {
+                if (c.getId() == cId) {
+                    for (Product p : products) {
+                        if (p.getId() == pId) {
+                            c.addProducts(p);
+                        }
+                    }
                 }
             }
-        }
-
-        for(Category c: categories){
-            System.out.println(c.getName());
-            System.out.println(c.getProducts().size());
-        }
-
- */
-
+        } //categories.stream().forEach(e -> System.out.println(e.getName() + ": " + e.getProducts().size()));
     }
 
 

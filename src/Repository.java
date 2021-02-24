@@ -189,24 +189,24 @@ public class Repository {
     }
 
 
-   /* public List<Pair> getCategoryBelongings(){
-        List<Pair> belongings = new ArrayList<>();
-        String query = "select productId, categoryId from categoryBelonging";
+   public List<CategoryBelonging> getCategoryBelongings(){
+        List<CategoryBelonging> belongings = new ArrayList<>();
+        String query = "select id, productId, categoryId from categoryBelonging";
 
         try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query)){
 
             while(rs.next()){
-                Pair p = new Pair(rs.getInt("productId"), rs.getInt("categoryId"));
-                belongings.add(p);
+                CategoryBelonging cb = new CategoryBelonging(rs.getInt("id"), rs.getInt("productId"), rs.getInt("categoryId"));
+                belongings.add(cb);
             }
 
         }catch (SQLException e){
             e.printStackTrace();
         }
         return belongings;
-    }*/
+    }
 
     public List<Customer> readCustomers() {
         List<Customer> customers = new ArrayList<>();
