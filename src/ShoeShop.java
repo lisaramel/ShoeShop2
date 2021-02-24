@@ -17,7 +17,7 @@ public class ShoeShop {
     private Repository r = new Repository();
     private Scanner sc = new Scanner(System.in);
     private List<Product> products;
-    private List<Product> availableProducts;
+    private List<Product> availableProducts = new ArrayList<>();
     private List<Rating> ratings;
     private List<Brand> brands;
     private List<Category> categories;
@@ -29,14 +29,7 @@ public class ShoeShop {
         assembleProducts();
         updateStock();
         getRatingIds();
-        //assembleCategoryBelonging();
-        /*
-        for(Product p : products){
-            System.out.println(p);
-        }
-
-         */
-
+        assembleCategoryBelonging();
 
         String userName;
         String password;
@@ -58,99 +51,184 @@ public class ShoeShop {
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
                 currentCustomer = r.signIn(userName, password);
+                System.out.println("\nVälkommen " + currentCustomer.getName());
+                Thread.sleep(1000);
                 inloggedLoop();
                 break;
             }
         }
     }
 
-    public void inloggedLoop(){
+    public void inloggedLoop() throws InterruptedException {
         assembleOrders();
 
-        System.out.println("\nVälkommen " + currentCustomer.getName() + "!\n");
-
-        System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+        System.out.println(showMeny());
         int userChoice = sc.nextInt();
 
         while (true){
             if(userChoice == 1){
-                // visa beställningar
                 showOrders();
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             } else if(userChoice == 2){
-                shoppingLoop();
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                shoppingLoop(true, 0);
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
-            } else if (userChoice == 3){
+            }else if(userChoice == 3){
+                showCategories();
+                int categoryNum = sc.nextInt();
+                shoppingLoop(false, categoryNum-1);
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            }
+
+            else if(userChoice == 4){
+                System.out.println(showTodaysOrder());
+                Thread.sleep(1000);
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            } else if(userChoice == 5){
+                rateProduct();
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            }
+            else if(userChoice == 6){
+                showProductRatings();
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            }
+            else if (userChoice == 7){
                 // logga ut
                 break;
-            } else if(userChoice == 4){
-                rateProduct();
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
-                userChoice = sc.nextInt();
-            } else{
+            }
+            else{
                 System.out.println("Fattar inte, försök igen\n");
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             }
 
         }
+    }
+
+    public String showMeny(){
+        return "1.\nVisa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
+                "\n4. Visa aktuell beställning \n5. Betygsätt produkter " +
+                "\n6. Visa produkters medelvärde \n7. Logga ut.";
+
     }
 
     public void updateStock(){
-        availableProducts = new ArrayList<>();
+        availableProducts.clear();
         for(Product p: products){
             if (p.getAmountInStock() > 0){
-                availableProducts.add(p); // borde gå med en lamda?
+                availableProducts.add(p);
             }
         }
     }
 
-    public void showOrders(){
-        // skriv ut alla orders
-        currentCustomer.getOrders().stream().forEach(e -> System.out.println(e.getDate() + " " + e.getProductIds()));
-
+    public String showTodaysOrder() throws InterruptedException {
+        for(Order o : currentCustomer.getOrders()){
+            if(o.getDate().equals(LocalDate.now())){
+               return o.getOrderInfo();
+            }
+        } return "Du har ingen pågående beställning.";
     }
 
-    public void shoppingLoop(){
+
+    public void showOrders() throws InterruptedException {
+        currentCustomer.getOrders().stream().forEach(o -> System.out.println(o.getOrderInfo() +"\n"));
+        Thread.sleep(1000);
+    }
+
+    public void showCategories(){
+        int counter = 1;
+        for (Category c : categories){
+            System.out.println(counter + ". " + c.getName());
+            counter++;
+        }
+        System.out.println(counter + ". " + "Jag vill tillbaka.");
+    }
+
+    public void shoppingLoop(boolean allProducts, int categoryNumber) throws InterruptedException {
 
         while (true){
             System.out.println("Vilken sko vill du lägga i din beställning? ");
-            printEnumeratedStockedProductes();
-            int userChoice = sc.nextInt();
+            Thread.sleep(1000);
+            Product chosenProduct;
+            if(allProducts){
+                printEnumeratedProducts(availableProducts);
+                int userChoice = sc.nextInt();
 
-            if (userChoice == availableProducts.size()+1) {
-                break;
+                if (userChoice == availableProducts.size()+1) {
+                    // tillbaka till huvudmenyn
+                    break;
+                }
+                chosenProduct = availableProducts.get(userChoice-1);
+            } else {
+                Category c = categories.get(categoryNumber);
+                printEnumeratedProducts(c.getProducts());
+                int userChoice = sc.nextInt();
+                if (userChoice == c.getProducts().size()+1) {
+                    // tillbaka till huvudmenyn
+                    break;
+                }
+                chosenProduct = c.getProducts().get(userChoice-1);
+
             }
 
-            // här göra addToCart-anrop
-            // alltså skaffa alla idn
-            // kolla dagens datum, finns det ingen beställning med dagens datum skickas ordersId -1 in
-            // för det borde ju inte finnas, och då kommer vi till skapa ny order
-
-            Product chosenProduct = availableProducts.get(userChoice-1);
             int ordersId = -1;
 
             for(Order o : currentCustomer.getOrders()){
-                if(o.getDate().equals(LocalDate.parse("2020-12-05"))){ // LocalDate.now()
-
+                if(o.getDate().equals(LocalDate.now())){
                     ordersId = o.getId();
                 }
             }
 
             r.newOrder(currentCustomer.getID(), ordersId, chosenProduct.getId());
 
-            System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning");
+            System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning\n");
+            Thread.sleep(700);
+            chosenProduct.lowerStock();
+            assembleOrders();
             updateStock();
-
         }
     }
 
-    public void rateProduct(){
+    public void showProductRatings() throws InterruptedException {
+        while(true){
+            System.out.println("Vilken sko vill du se betyg och kommentarer för: \n");
+            Thread.sleep(1000);
+            printEnumeratedProducts(products);
+            int userChoice = sc.nextInt();
+            if (userChoice == products.size()+1) {
+                // tillbaka till huvudmenyn
+                break;
+            }
+            Product chosenProduct = products.get(userChoice-1);
+            getProductRatings(chosenProduct);
+            Thread.sleep(1500);
+        }
+
+    }
+
+    public void getProductRatings(Product product){
+        System.out.println(product.shopperView());
+
+        double rate = r.getAvgRating(product.getId());
+        System.out.println("Medelbetyg: " + rate);
+
+        List<String> reviews = r.getReviews(product.getId());
+        System.out.println("Alla kommentarer: ");
+        reviews.stream().forEach(e -> System.out.println(e));
+    }
+
+    public void rateProduct() throws InterruptedException {
         while (true){
+            System.out.println("Vilken sko vill du betygsätta?\n");
+            Thread.sleep(700);
+            printEnumeratedProducts(products);
             System.out.println("Vilken sko vill du betygsätta? ");
-            printEnumeratedStockedProductes();
+            printEnumeratedProducts(availableProducts);
             int userChoice = sc.nextInt();
 
             if (userChoice == availableProducts.size()+1) {
@@ -159,89 +237,75 @@ public class ShoeShop {
 
             Product chosenProduct = availableProducts.get(userChoice-1);
 
-            System.out.println("Vad vill du ge den för betyg?");
-            System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
-            userChoice = sc.nextInt();
-
-            if (userChoice == 1) {
-                System.out.println("Du gav produkten betyget \"Missnöjd\"");
-            } else if (userChoice == 2) {
-                System.out.println("Du gav produkten betyget \"Ganska nöjd\"");
-            } else if (userChoice == 3) {
-                System.out.println("Du gav produkten betyget \"Nöjd\"");
-            } else if (userChoice == 4) {
-                System.out.println("Du gav produkten betyget \"Mycket nöjd\"");
-            } else {
-                System.out.println("Fel inmatning? Försök igen.");
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+            if (getCustomersOrderedProducts().contains(chosenProduct)) {
+                System.out.println("Vad vill du ge den för betyg?");
+                System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
                 userChoice = sc.nextInt();
-            }
 
-            Rating rate = ratings.get(userChoice-1);
+                if (userChoice > 4 || userChoice < 0) {
+                    System.out.println("Fattar inte, försök igen\n");
+                    System.out.println("Vad vill du ge den för betyg?");
+                    System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
+                    userChoice = sc.nextInt();
+                }
 
-            String text = "";
+                Rating rate = ratings.get(userChoice - 1);
+                String text = "";
 
-            System.out.println("Vill du lägga till en kommentar?");
-            System.out.println("1. Ja \n2. Nej");
-            userChoice = sc.nextInt();
-
-            if (userChoice == 1) {
-                System.out.println("Kommentar: ");
-                text = sc.next();
-            } else if (userChoice == 2) {
-                text = null;
-            } else {
-                System.out.println("Fel inmatning? Försök igen.");
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                System.out.println("Vill du lägga till en kommentar?");
+                System.out.println("1. Ja \n2. Nej");
                 userChoice = sc.nextInt();
-            }
 
-            r.setRating(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
+                if (userChoice == 1) {
+                    System.out.println("Kommentar: ");
+                    sc.nextLine();
+                    text = sc.nextLine();
+                } else if (userChoice == 2) {
+                    text = "";
+                } else {
+                    System.out.println("Fattar inte, försök igen\n");
+                    System.out.println(showMeny());
+                    userChoice = sc.nextInt();
+                }
 
-            System.out.println("Du har gett " + chosenProduct.shopperView() + " betyget " + rate.getName() + "\n");
+                r.setRating(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
 
-
+                System.out.println("Du har gett " + chosenProduct.shopperView() + " betyget: " + "\"" + rate.getName() + "\"" + "\n");
+                Thread.sleep(1000);
+                break;
+            } else
+                System.out.println("Du har inte köpt den här varan tidigare och kan därför inte betygsätta den.\n");
+                Thread.sleep(700);
         }
     }
 
-    public void printEnumeratedStockedProductes(){
+    public void printEnumeratedProducts(List<Product> productList){
         int counter = 1;
-        for(Product p: availableProducts){
+        for(Product p: productList){
             System.out.println(counter + ". " + p.shopperView());
             counter++;
         }
         System.out.println(counter + ". Jag vill tillbaka");
     }
 
-    public void assembleCategoryBelonging(){
+    public void assembleCategoryBelonging() {
         categories = r.getCategories();
-        //List<Pair> categoryBelongings = r.getCategoryBelongings();
-/*
-        for (Pair p : categoryBelongings){
+        List<CategoryBelonging> categoryBelongings = r.getCategoryBelongings();
 
-            System.out.println(p.getKey());
-        }
-
-        for(Product p : products){
-            System.out.println(p.getColour() + p.getSize());
-            for(Category c : categories){
-                System.out.println(" p " + p.getId() + "   c " + c.getId());
-                if(p.getId() == c.getId()){
-
-                    c.addProducts(p);
+        for (CategoryBelonging cb : categoryBelongings) {
+            int cId = cb.getCategoryId();
+            int pId = cb.getProductId();
+            for (Category c : categories) {
+                if (c.getId() == cId) {
+                    for (Product p : products) {
+                        if (p.getId() == pId) {
+                            c.addProducts(p);
+                        }
+                    }
                 }
             }
-        }
-
-        for(Category c: categories){
-            System.out.println(c.getName());
-            System.out.println(c.getProducts().size());
-        }
-
- */
-
+        } //categories.stream().forEach(e -> System.out.println(e.getName() + ": " + e.getProducts().size()));
     }
-
 
 
     public void assembleOrders(){
@@ -250,14 +314,46 @@ public class ShoeShop {
         for(Order o : currentCustomer.getOrders()){
             o.setProductIds(r.getCarts(o.getId()));
         }
+
+        for (Order o : currentCustomer.getOrders()){
+            for(Integer id : o.getProductIds()){
+                for(Product p : products){
+                    if(id == p.getId()){
+                        o.addProduct(p);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public List<Product> getCustomersOrderedProducts(){
+        List<Product> customersProducts = new ArrayList<>();
+        currentCustomer.ordersSetup(r.getOrders(currentCustomer.getID()));
+        // och carts som hör till detta
+        for(Order o : currentCustomer.getOrders()){
+            o.setProductIds(r.getCarts(o.getId()));
+        }
+
+        for (Order o : currentCustomer.getOrders()){
+            for(Integer id : o.getProductIds()){
+                for(Product p : products){
+                    if(id == p.getId()){
+                        customersProducts.add(p);
+                    }
+                }
+            }
+        }
+        return customersProducts;
+
     }
 
     //getCurrentCustomerID
 
     public void getRatingIds(){
         ratings = r.getRatings();
-        for(Rating r : ratings){
-            r.getId();
+        for(Rating rate : ratings){
+            rate.getId();
         }
     }
 

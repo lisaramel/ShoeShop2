@@ -58,16 +58,14 @@ public class Repository {
     public List<Rating> getRatings() {
         List<Rating> ratings = new ArrayList<>();
 
-        String query = "select id, name, number, created from rating";
+        String query = "select id, name, number from rating";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
 
             while (rs.next()) {
-                Rating r = new Rating(rs.getInt("id"), rs.getString("name"),
-                        rs.getInt("number"));
-
+                Rating r = new Rating(rs.getInt("id"), rs.getString("name"), rs.getInt("number"));
                 ratings.add(r);
             }
 
@@ -77,40 +75,6 @@ public class Repository {
 
         return ratings;
 
-    }
-
-
-    public List<Object> getTables(String tableName) {
-        List<Object> list = new ArrayList<>();
-        String query = "select id, name from ?";
-
-        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
-             CallableStatement stmt = con.prepareCall(query)) {
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            stmt.setString(1, tableName);
-            rs = stmt.executeQuery();
-
-            if (tableName.equals("brand")) {
-                while (rs.next()) {
-                    Brand b = new Brand(rs.getInt("id"),
-                            rs.getString("name"));
-                    list.add(b);
-                }
-            } else if (tableName.equals("category")) {
-                while (rs.next()) {
-                    Category c = new Category(rs.getInt("id"),
-                            rs.getString("name"));
-                    list.add(c);
-                }
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
     }
 
 
@@ -205,7 +169,7 @@ public class Repository {
     }
 
     public void setRating(int customerId, int productId, int ratingId, String text) {
-        String query1 = "CALL rating(?, ?, ?, ?)";
+        String query1 = "CALL rate(?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
              CallableStatement stmt1 = con.prepareCall(query1)){
@@ -223,24 +187,24 @@ public class Repository {
     }
 
 
-   /* public List<Pair> getCategoryBelongings(){
-        List<Pair> belongings = new ArrayList<>();
-        String query = "select productId, categoryId from categoryBelonging";
+   public List<CategoryBelonging> getCategoryBelongings(){
+        List<CategoryBelonging> belongings = new ArrayList<>();
+        String query = "select id, productId, categoryId from categoryBelonging";
 
         try(Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query)){
 
             while(rs.next()){
-                Pair p = new Pair(rs.getInt("productId"), rs.getInt("categoryId"));
-                belongings.add(p);
+                CategoryBelonging cb = new CategoryBelonging(rs.getInt("id"), rs.getInt("productId"), rs.getInt("categoryId"));
+                belongings.add(cb);
             }
 
         }catch (SQLException e){
             e.printStackTrace();
         }
         return belongings;
-    }*/
+    }
 
     public List<Customer> readCustomers() {
         List<Customer> customers = new ArrayList<>();
@@ -297,6 +261,56 @@ public class Repository {
         return "Ny order!";
     }
 
+    public List<String> getReviews(int productId){
+        List<String> reviews = new ArrayList<>();
+
+        String query = "select text, name, number from review join rating r on review.ratingId = r.id where productId = ?";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt = con.prepareCall(query)) {
+
+            stmt.setInt(1, productId);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                StringBuilder sb = new StringBuilder();
+                String text = rs.getString("text");
+                String ratingName = rs.getString("name");
+                int ratingGrade = rs.getInt("number");
+                sb.append("Kommentar : " + text + '\n');
+                sb.append("Betyg: " + ratingName + '\n');
+                sb.append("Poäng: "+ ratingGrade + '\n');
+
+                reviews.add(sb.toString());
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+
+        }
+
+
+        return reviews;
+    }
+
+    public double getAvgRating(int productId){
+        double avgRate = 0;
+        String query = "{? = call get_avg_rate(?)}";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt = con.prepareCall(query)) {
+
+            stmt.registerOutParameter(1, Types.DOUBLE);
+            stmt.setInt(2, productId);
+            stmt.execute();
+            avgRate = stmt.getDouble(1);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgRate;
+    }
+
     public Customer getCustomer(String userName) {
 
         String query = "select * from customer where username like " + '\'' + userName + '\'';
@@ -330,7 +344,7 @@ public class Repository {
 
                 while (rs.next()) {
                     customer = new Customer(rs.getInt("id"), rs.getString("name"), rs.getInt("addressId"), rs.getString("username"), rs.getString("password"));
-                    System.out.println("Välkommen " + customer.getName() + "!");
+                    //System.out.println("Välkommen " + customer.getName() + "!");
                 }
                 return customer;
 
@@ -341,4 +355,27 @@ public class Repository {
         return null;
     }
 
+    public String setNullValue(String tableName, String columnName) {
+        String query = "insert into " + tableName + "(" + columnName + ") values ?";
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             PreparedStatement ps = con.prepareStatement(query);) {
+
+            ps.setNull(1, Types.NULL);
+            ps.executeUpdate();
+
+           /* try (ResultSet rs = ps.executeQuery()) {
+
+                String findNull = "";
+
+                while (rs.next()) {
+                    findNull = rs.getString(columnName);
+                    return findNull;
+                }
+            }*/
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }
