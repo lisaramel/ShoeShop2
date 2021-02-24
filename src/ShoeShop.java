@@ -65,9 +65,7 @@ public class ShoeShop {
     public void inloggedLoop(){
         assembleOrders();
 
-        System.out.println("välkommen " + currentCustomer.getName() + "!");
-
-        System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+        System.out.println(showMeny());
         int userChoice = sc.nextInt();
 
         //1gamla bestlällningar 2aktuell beställning 3ge betyg, kommentera 5 visa produkter medelvärde 6 logga ut
@@ -75,22 +73,32 @@ public class ShoeShop {
             if(userChoice == 1){
                 // visa beställningar
                 showOrders();
-                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             } else if(userChoice == 2){
                 shoppingLoop();
-                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
-            } else if (userChoice == 3){
+            } else if(userChoice == 3){
+                System.out.println(showTodaysOrder());
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            }
+            else if (userChoice == 6){
                 // logga ut
                 break;
             } else{
                 System.out.println("fattar inte, försök igen");
-                System.out.println("1, visa beställningar, 2, visa produkter, 3, logga ut.");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             }
 
         }
+    }
+
+    public String showMeny(){
+        return "\n1, visa gamla beställningar, 2, visa produkter, 3, visa aktuell beställning, " +
+                "\n4, betygsätt produkter, 5, visa produkters medelvärde, 6, logga ut.";
     }
 
     public void updateStock(){
@@ -102,9 +110,21 @@ public class ShoeShop {
         }
     }
 
+    public String showTodaysOrder(){
+        for(Order o : currentCustomer.getOrders()){
+            if(o.getDate().equals(LocalDate.now())){
+               return o.getOrderInfo();
+            }
+        } return "Du har ingen pågående beställning.";
+    }
+
+
     public void showOrders(){
         // skriv ut alla orders
-        currentCustomer.getOrders().stream().forEach(e -> System.out.println(e.getDate() + " " + e.getProductIds()));
+        for (Order o : currentCustomer.getOrders()){
+            System.out.println(o.getOrderInfo());
+        }
+        //currentCustomer.getOrders().stream().forEach(e -> System.out.println(e.getDate() + " " + e.getProductIds()));
 
     }
 
@@ -129,8 +149,7 @@ public class ShoeShop {
             int ordersId = -1;
 
             for(Order o : currentCustomer.getOrders()){
-                if(o.getDate().equals(LocalDate.parse("2020-12-05"))){ // LocalDate.now()
-
+                if(o.getDate().equals(LocalDate.now())){ // , LocalDate.parse("2020-12-05")
                     ordersId = o.getId();
                 }
             }
@@ -138,6 +157,7 @@ public class ShoeShop {
             r.newOrder(currentCustomer.getID(), ordersId, chosenProduct.getId());
 
             System.out.println("du har lagt " + chosenProduct.shopperView() + " i din beställning");
+            assembleOrders();
             updateStock();
 
 
@@ -188,6 +208,17 @@ public class ShoeShop {
         for(Order o : currentCustomer.getOrders()){
             o.setProductIds(r.getCarts(o.getId()));
         }
+
+        for (Order o : currentCustomer.getOrders()){
+            for(Integer id : o.getProductIds()){
+                for(Product p : products){
+                    if(id == p.getId()){
+                        o.addProduct(p);
+                    }
+                }
+            }
+        }
+
     }
 
     //getCurrentCustomerID
