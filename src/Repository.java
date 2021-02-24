@@ -205,7 +205,7 @@ public class Repository {
     }
 
     public void setRating(int customerId, int productId, int ratingId, String text) {
-        String query1 = "CALL rating(?, ?, ?, ?)";
+        String query1 = "CALL rate(?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
              CallableStatement stmt1 = con.prepareCall(query1)){

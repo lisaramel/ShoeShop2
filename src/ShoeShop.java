@@ -90,7 +90,7 @@ public class ShoeShop {
                 break;
             } else if(userChoice == 4){
                 rateProduct();
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                showMeny();
                 userChoice = sc.nextInt();
             } else{
                 System.out.println("Fattar inte, försök igen\n");
@@ -212,7 +212,7 @@ public class ShoeShop {
                 System.out.println("Kommentar: ");
                 text = sc.next();
             } else if (userChoice == 2) {
-                text = null;
+                text = "";
             } else {
                 System.out.println("Fel inmatning? Försök igen.");
                 System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
