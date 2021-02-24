@@ -139,6 +139,33 @@ public class Repository {
         return productIds;
     }
 
+    public String getAddress(int customerId){
+        StringBuilder sb = new StringBuilder();
+
+        String query = "select street, zipCode, state  from customer join address on address.id = customer.addressId where customer.id = ?";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt = con.prepareCall(query)) {
+
+            stmt.setInt(1, customerId);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+
+                String street = rs.getString("street");
+                String zipCode = rs.getString("zipCode");
+                String state = rs.getString("state");
+                sb.append(street + ", " + zipCode + ", " + state);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+
+        }
+
+        return sb.toString();
+    }
+
     public List<Category> getCategories() {
         List<Category> categories = new ArrayList<>();
         String query = "select id, name from category";

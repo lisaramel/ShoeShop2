@@ -37,6 +37,14 @@ public class Customer {
         return orders;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +

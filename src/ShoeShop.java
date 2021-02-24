@@ -49,7 +49,7 @@ public class ShoeShop {
                 System.out.println("Fel inloggningsuppgifter. Var god försök igen.");;
             } else {
                 currentCustomer = r.signIn(userName, password);
-
+                currentCustomer.setAddress(r.getAddress(currentCustomer.getID()));
                 System.out.println("\nVälkommen " + currentCustomer.getName());
                 Thread.sleep(1000);
                 inloggedLoop();
@@ -79,9 +79,7 @@ public class ShoeShop {
                 shoppingLoop(false, categoryNum-1);
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
-            }
-
-            else if(userChoice == 4){
+            } else if(userChoice == 4){
                 System.out.println(showTodaysOrder());
                 Thread.sleep(1000);
                 System.out.println(showMeny());
@@ -109,7 +107,7 @@ public class ShoeShop {
     }
 
     public String showMeny(){
-        return "1.\nVisa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
+        return "1. Visa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
                 "\n4. Visa aktuell beställning \n5. Betygsätt produkter " +
                 "\n6. Visa produkters medelvärde \n7. Logga ut.";
 
