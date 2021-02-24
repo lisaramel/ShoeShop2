@@ -80,40 +80,6 @@ public class Repository {
     }
 
 
-    public List<Object> getTables(String tableName) {
-        List<Object> list = new ArrayList<>();
-        String query = "select id, name from ?";
-
-        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
-             CallableStatement stmt = con.prepareCall(query)) {
-
-            ResultSet rs = stmt.executeQuery(query);
-
-            stmt.setString(1, tableName);
-            rs = stmt.executeQuery();
-
-            if (tableName.equals("brand")) {
-                while (rs.next()) {
-                    Brand b = new Brand(rs.getInt("id"),
-                            rs.getString("name"));
-                    list.add(b);
-                }
-            } else if (tableName.equals("category")) {
-                while (rs.next()) {
-                    Category c = new Category(rs.getInt("id"),
-                            rs.getString("name"));
-                    list.add(c);
-                }
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-
     public List<Brand> getBrands() {
         List<Brand> brands = new ArrayList<>();
         String query = "select id, name from brand";
@@ -295,6 +261,56 @@ public class Repository {
 
         }
         return "Ny order!";
+    }
+
+    public List<String> getReviews(int productId){
+        List<String> reviews = new ArrayList<>();
+
+        String query = "select text, name, number from review join rating r on review.ratingId = r.id where productId = ?";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt = con.prepareCall(query)) {
+
+            stmt.setInt(1, productId);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                StringBuilder sb = new StringBuilder();
+                String text = rs.getString("text");
+                String ratingName = rs.getString("name");
+                int ratingGrade = rs.getInt("number");
+                sb.append("Kommentar : " + text + '\n');
+                sb.append("Betyg: " + ratingName + '\n');
+                sb.append("Poäng: "+ ratingGrade + '\n');
+
+                reviews.add(sb.toString());
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+
+        }
+
+
+        return reviews;
+    }
+
+    public double getAvgRating(int productId){
+        double avgRate = 0;
+        String query = "{? = call get_avg_rate(?)}";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             CallableStatement stmt = con.prepareCall(query)) {
+
+            stmt.registerOutParameter(1, Types.DOUBLE);
+            stmt.setInt(2, productId);
+            stmt.execute();
+            avgRate = stmt.getDouble(1);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgRate;
     }
 
     public Customer getCustomer(String userName) {
