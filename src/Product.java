@@ -61,8 +61,16 @@ public class Product {
         return amountInStock;
     }
 
+    public void setAmountInStock(int amountInStock) {
+        this.amountInStock = amountInStock;
+    }
+
     public String shopperView(){
         return colour + " " + brand.getName() + " - storlek " + size + ", " + price + " kr.";
+    }
+
+    public void lowerStock(){
+        amountInStock -= 1;
     }
 
     @Override

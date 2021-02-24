@@ -15,7 +15,7 @@ public class ShoeShop {
     private Repository r = new Repository();
     private Scanner sc = new Scanner(System.in);
     private List<Product> products;
-    private List<Product> availableProducts;
+    private List<Product> availableProducts = new ArrayList<>();
     private List<Rating> ratings;
     private List<Brand> brands;
     private List<Category> categories;
@@ -28,13 +28,6 @@ public class ShoeShop {
         updateStock();
         getRatingIds();
         assembleCategoryBelonging();
-        /*
-        for(Product p : products){
-            System.out.println(p);
-        }
-
-         */
-
 
         String userName;
         String password;
@@ -72,30 +65,38 @@ public class ShoeShop {
 
         while (true){
             if(userChoice == 1){
-                // visa beställningar
                 showOrders();
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
             } else if(userChoice == 2){
-                shoppingLoop();
+                shoppingLoop(true, 0);
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
-            } else if(userChoice == 3){
+            }else if(userChoice == 3){
+                showCategories();
+                int categoryNum = sc.nextInt();
+                shoppingLoop(false, categoryNum-1);
+                System.out.println(showMeny());
+                userChoice = sc.nextInt();
+            }
+
+            else if(userChoice == 4){
                 System.out.println(showTodaysOrder());
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
-            } else if(userChoice == 4){
+            } else if(userChoice == 5){
                 rateProduct();
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
             }
-            else if (userChoice == 6){
-                // logga ut
-                break;
-            } else if(userChoice == 5){
+            else if(userChoice == 6){
                 showProductRatings();
                 System.out.println(showMeny());
                 userChoice = sc.nextInt();
+            }
+            else if (userChoice == 7){
+                // logga ut
+                break;
             }
             else{
                 System.out.println("Fattar inte, försök igen\n");
@@ -107,12 +108,14 @@ public class ShoeShop {
     }
 
     public String showMeny(){
-        return "1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n";
+        return "1. Visa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
+                "\n4. Visa aktuell beställning \n5. Betygsätt produkter " +
+                "\n6. Visa produkters medelvärde \n7. Logga ut.\n";
 
     }
 
     public void updateStock(){
-        availableProducts = new ArrayList<>();
+        availableProducts.clear();
         for(Product p: products){
             if (p.getAmountInStock() > 0){
                 availableProducts.add(p);
@@ -133,18 +136,41 @@ public class ShoeShop {
         currentCustomer.getOrders().stream().forEach(o -> System.out.println(o.getOrderInfo()));
     }
 
-    public void shoppingLoop(){
+    public void showCategories(){
+        int counter = 1;
+        for (Category c : categories){
+            System.out.println(counter + ". " + c.getName());
+            counter++;
+        }
+        System.out.println(counter + ". " + "Jag vill tillbaka.");
+    }
+
+    public void shoppingLoop(boolean allProducts, int categoryNumber){
 
         while (true){
             System.out.println("Vilken sko vill du lägga i din beställning? ");
-            printEnumeratedProducts(availableProducts);
-            int userChoice = sc.nextInt();
+            Product chosenProduct;
+            if(allProducts){
+                printEnumeratedProducts(availableProducts);
+                int userChoice = sc.nextInt();
 
-            if (userChoice == availableProducts.size()+1) {
-                // tillbaka till huvudmenyn
-                break;
+                if (userChoice == availableProducts.size()+1) {
+                    // tillbaka till huvudmenyn
+                    break;
+                }
+                chosenProduct = availableProducts.get(userChoice-1);
+            } else {
+                Category c = categories.get(categoryNumber);
+                printEnumeratedProducts(c.getProducts());
+                int userChoice = sc.nextInt();
+                if (userChoice == c.getProducts().size()+1) {
+                    // tillbaka till huvudmenyn
+                    break;
+                }
+                chosenProduct = c.getProducts().get(userChoice-1);
+
             }
-            Product chosenProduct = availableProducts.get(userChoice-1);
+
             int ordersId = -1;
 
             for(Order o : currentCustomer.getOrders()){
@@ -156,6 +182,7 @@ public class ShoeShop {
             r.newOrder(currentCustomer.getID(), ordersId, chosenProduct.getId());
 
             System.out.println("Du har lagt till " + chosenProduct.shopperView() + " i din beställning");
+            chosenProduct.lowerStock();
             assembleOrders();
             updateStock();
         }
@@ -228,7 +255,7 @@ public class ShoeShop {
                 r.setNullValue("review", "text");
             } else {
                 System.out.println("Fel inmatning? Försök igen.");
-                System.out.println("1. Visa gamla beställningar \n2. Visa produkter \n3. Visa aktuell beställning \n4. Betygsätt produkter \n5. Visa produkters medelvärde \n6. Logga ut.\n");
+                System.out.println(showMeny());
                 userChoice = sc.nextInt();
             }
 
