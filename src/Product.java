@@ -62,7 +62,7 @@ public class Product {
     }
 
     public String shopperView(){
-        return colour + " " + brand.getName() + " storlek " + size + " " + price + " kr.";
+        return colour + " " + brand.getName() + " - storlek " + size + ", " + price + " kr.";
     }
 
     @Override

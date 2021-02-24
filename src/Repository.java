@@ -55,6 +55,31 @@ public class Repository {
 
     }
 
+    public List<Rating> getRatings() {
+        List<Rating> ratings = new ArrayList<>();
+
+        String query = "select id, name, number, created from rating";
+
+        try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                Rating r = new Rating(rs.getInt("id"), rs.getString("name"),
+                        rs.getInt("number"));
+
+                ratings.add(r);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ratings;
+
+    }
+
+
     public List<Object> getTables(String tableName) {
         List<Object> list = new ArrayList<>();
         String query = "select id, name from ?";
@@ -180,13 +205,10 @@ public class Repository {
     }
 
     public void setRating(int customerId, int productId, int ratingId, String text) {
-        String query1 = "CALL addTTomte(?, ?, ?, ?)";
-        //String query2 = "select ratingId from review where ratingId = ?";
+        String query1 = "CALL rating(?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
              CallableStatement stmt1 = con.prepareCall(query1)){
-           //  PreparedStatement stmt2 = con.prepareCall(query2);
-           //  ResultSet rs = stmt2.executeQuery(query2)) {
 
             stmt1.setInt(1, customerId);
             stmt1.setInt(2, productId);
