@@ -20,20 +20,4 @@ public class Review {
         this.productId = productId;
         this.orderId = orderId;
     }
-
-    public int getRatingId() {
-        return ratingId;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
 }

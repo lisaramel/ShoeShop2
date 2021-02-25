@@ -28,8 +28,4 @@ public class Rating {
     public String getName() {
         return name;
     }
-
-    public LocalDate getDate() {
-        return date;
-    }
 }

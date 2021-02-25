@@ -107,7 +107,7 @@ public class ShoeShop {
     }
 
     public String showMeny(){
-        return "1. Visa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
+        return "\n1. Visa gamla beställningar \n2. Visa alla produkter i lager  \n3. Visa produkter enligt en kategori" +
                 "\n4. Visa aktuell beställning \n5. Betygsätt produkter " +
                 "\n6. Visa produkters medelvärde \n7. Logga ut.";
 
@@ -201,17 +201,16 @@ public class ShoeShop {
             getProductRatings(chosenProduct);
             Thread.sleep(1500);
         }
-
     }
 
     public void getProductRatings(Product product){
         System.out.println(product.shopperView());
 
         double rate = r.getAvgRating(product.getId());
-        System.out.println("Medelbetyg: " + rate);
+        System.out.println("Medelbetyg: " + rate + "\n");
 
         List<String> reviews = r.getReviews(product.getId());
-        System.out.println("Alla kommentarer: ");
+        System.out.println("Alla kommentarer: \n");
         reviews.stream().forEach(e -> System.out.println(e));
     }
 
@@ -229,14 +228,17 @@ public class ShoeShop {
             Product chosenProduct = products.get(userChoice-1);
 
             if (getCustomersOrderedProducts().contains(chosenProduct)) {
-                System.out.println("Vad vill du ge den för betyg?");
+                System.out.println("Vad vill du ge den för betyg?\n");
+                Thread.sleep(700);
                 System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
                 userChoice = sc.nextInt();
 
                 if (userChoice > 4 || userChoice < 0) {
                     System.out.println("Fattar inte, försök igen\n");
-                    System.out.println("Vad vill du ge den för betyg?");
+                    System.out.println("Vad vill du ge den för betyg?\n");
+                    Thread.sleep(700);
                     System.out.println("1. Missnöjd \n2. Ganska nöjd \n3. Nöjd \n4. Mycket nöjd");
+                    sc.nextLine();
                     userChoice = sc.nextInt();
                 }
 
