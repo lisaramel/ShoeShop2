@@ -261,7 +261,7 @@ public class ShoeShop {
                     userChoice = sc.nextInt();
                 }
 
-                r.setRating(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
+                r.setReview(currentCustomer.getID(), chosenProduct.getId(), rate.getId(), text);
 
                 System.out.println("Du har gett " + chosenProduct.shopperView() + " betyget: " + "\"" + rate.getName() + "\"" + "\n");
                 Thread.sleep(1000);

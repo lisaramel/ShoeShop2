@@ -186,7 +186,7 @@ public class Repository {
         return categories;
     }
 
-    public void setRating(int customerId, int productId, int ratingId, String text) {
+    public void setReview(int customerId, int productId, int ratingId, String text) {
         String query1 = "CALL rate(?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(p.getProperty("connectionString"), p.getProperty("name"), p.getProperty("password"));
